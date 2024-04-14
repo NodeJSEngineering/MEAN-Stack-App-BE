@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const OwnerSchema = new mongoose.Schema({
+const Owner = new mongoose.Schema({
     name: {
         type: String,
         trim: true,
@@ -14,8 +14,6 @@ const OwnerSchema = new mongoose.Schema({
     {
         collection: 'owner'
     })
-const Classs = mongoose.model('owner', OwnerSchema)
+const OwnerSchema = mongoose.model('owner', Owner);
 
-
-module.exports = Classs
-
+module.exports = OwnerSchema

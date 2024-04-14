@@ -1,17 +1,14 @@
 const express = require('express');
-const app = express();
 const businessRoutes = express.Router();
 const path = require('path');
-
 
 // Require Business model in our routes module
 let Business = require('../models/Business');
 
-// http://localhost:4000/business/add  
 businessRoutes.route('/add').post(function (req, res) {
   let business = new Business(req.body);
 
-  // other way
+  // Another way
   // business.save()
   //   .then(business => {
   //     res.status(200).json({'business': 'business in added successfully'});
@@ -29,9 +26,7 @@ businessRoutes.route('/add').post(function (req, res) {
   })
 });
 
-// http://localhost:4000/business 
 businessRoutes.route('/').get(function (req, res) {
-  ;
   Business.find(function (err, businesses) {
     if (err) {
       console.log(err);
@@ -42,7 +37,6 @@ businessRoutes.route('/').get(function (req, res) {
   });
 });
 
-// Defined edit route
 businessRoutes.route('/edit/:id').get(function (req, res) {
   let id = req.params.id;
   Business.findById(id, function (err, business) {
@@ -50,7 +44,6 @@ businessRoutes.route('/edit/:id').get(function (req, res) {
   });
 });
 
-//  Defined update route
 businessRoutes.route('/update/:id').post(function (req, res) {
   Business.findById(req.params.id, function (err, business) {
     if (!business)
@@ -70,7 +63,6 @@ businessRoutes.route('/update/:id').post(function (req, res) {
   });
 });
 
-// Defined delete | remove | destroy route
 businessRoutes.route('/delete/:id').get(function (req, res) {
   Business.findByIdAndRemove({ _id: req.params.id }, function (err, business) {
     if (err) res.json(err);
@@ -78,60 +70,59 @@ businessRoutes.route('/delete/:id').get(function (req, res) {
   });
 });
 
-// add through html form
-// http://localhost:4000/business/addbusiness
 businessRoutes.route('/addbusiness').get(function (req, res) {
-  res.sendFile(path.join(__dirname, '../public/add-business.html'));  // back out one level first:
+  res.sendFile(path.join(__dirname, '../public/add-business.html'));  // path:back out one level first
 });
-
 
 businessRoutes.route('/addbusiness/:ownerId/owner').post((req, res) => {
   (new Business({ 'person_name': req.body.person_name, 'business_name': req.body.business_name, '_ownerId': req.params.ownerId }))
     .save()
-    .then((student) => res.send(student))
+    .then((newBuzz) => res.send(newBuzz))
     .catch((error) => console.log(error))
 })
 
+// Get data of all businesses on the basis of ownerID
+businessRoutes.route('/owner/:ownerId/business').get(async (req, res) => {
 
-businessRoutes.route('/myclass/:myclassId/students').get((req, res) => {
-  Business.find({ _classId: req.params.myclassId })
-    .then((student) => res.send(student))
+  // To check JSON data of Business
+  // const items = await Business.find().lean().exec(); // .exec() returns a true Promise
+  // res.json({items});
+  // console.log(req.params.ownerId, items)
+
+  Business.find({ _ownerId: req.params.ownerId })
+    .then((buzz) => res.send(buzz))
     .catch((error) => console.log(error))
 })
 
-businessRoutes.route('/myclass/:myclassId/students/:studentId').get((req, res) => {
-  Business.findOne({ _classId: req.params.myclassId, _id: req.params.studentId })
-    .then((onestudent) => res.send(onestudent))
+// Get specific business on the basis of ownerID and businessID
+businessRoutes.route('/owner/:ownerId/business/:businessId').get((req, res) => {
+  Business.findOne({ _ownerId: req.params.ownerId, _id: req.params.businessId })
+    .then((res) => res.send(res))
     .catch((error) => console.log(error))
 })
 
-app.patch('/myclass/:myclassId/students/:studentId', (req, res) => {
-  student.findOneAndUpdate({ '_id': req.params.myclassId, _id: req.params.studentId }, { $set: req.body })
-    .then((student) => res.send(student))
+// update specific business on the basis of ownerID and businessID
+businessRoutes.patch('/owner/:ownerId/business/:businessId', (req, res) => {
+  Business.findOneAndUpdate({ _ownerId: req.params.ownerId, _id: req.params.businessId }, { $set: req.body })
+    .then((buzz) => res.send(buzz))
     .catch((error) => console.log(error))
 })
 
-app.delete('/myclass/:myclassId', (req, res) => {
-  const deleteStudents = (myclass) => {
-    student.deleteMany({ '_id': req.params.myclassId })
-      .then(() => myclass)
-      .catch((error) => console.log(error))
-  }
-  myclass.findByIdAndDelete({ '_id': req.params.myclassId })
-    .then((myclass) => res.send(deleteStudents(myclass)))
+// delete specific business of owner
+businessRoutes.delete('/owner/:ownerId/business/:businessId', (req, res) => {
+  Business.findOneAndDelete({ _id: req.params.businessId, _ownerId: req.params.ownerId }).then((buzz) => res.send(buzz))
     .catch((error) => console.log(error))
 })
 
 // This responds to a GET request for abcd, abxcd, ab123cd, and so on
-app.get('/ab*cd', function (req, res) {  
-    console.log("Got a GET request for /ab*cd");
-    res.send('Page Pattern Match');
+businessRoutes.get('/ab*cd', function (req, res) {
+  console.log("Got a GET request for /ab*cd");
+  res.send('Page Pattern Match');
 })
 
-// This response to a DELETE request for the /del_user page.
-app.delete('/del_user', function (req, res) { 
-    console.log("Got a DELETE request for /del_user");
-    res.send('Hello DELETE');
+businessRoutes.delete('/del_user', function (req, res) {
+  console.log("Got a DELETE request for /del_user");
+  res.send('Hello DELETE');
 })
 
 
