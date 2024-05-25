@@ -22,7 +22,11 @@ I'm Sam, and I'm passionate about product engineering and web development. I cre
 ### About the app
 Implemented basics of Firebase.
 
-###  Methods	Urls	Actions
+### Useful Links
+- [Base URL](http://localhost:4000/)
+
+###  APIs Detail
+ **Method**	**Url**	**Action**
 - GET	api/tutorials	get all Tutorials
 - GET	api/tutorials/:id	get Tutorial by id
 - POST	api/tutorials	add new Tutorial
