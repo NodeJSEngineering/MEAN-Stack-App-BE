@@ -13,7 +13,6 @@ const ownerRoute = require("./routes/owner.route");
 mongoose.Promise = global.Promise;
 // mongodb-connection-string - first param -> [config.DB] use that if you want to use local DB
 
-// mongodb+srv://test:test123@cluster0.dietn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 const mongodbConnectionString =
 config.DB;
 // remove the deprecation warning by adding the option useUnifiedTopology
